@@ -1,0 +1,31 @@
+#dictionary {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#dictionary td,
+#dictionary th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#dictionary tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#dictionary tr:hover {
+  background-color: #ddd;
+}
+
+#dictionary th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04aa6d;
+  color: white;
+}
+#trad-char,
+#simp-char {
+  width: max-content;
+}
