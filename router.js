@@ -1,4 +1,5 @@
 const express = require('express');
+const dictionaryModel = require('./models');
 
 // A JavaScript version of franki allegra's cc-cedict parser
 // (https://github.com/rubber-duck-dragon/rubber-duck-dragon.github.io)
@@ -34,33 +35,36 @@ const linesToSkip = [
   'see',
 ];
 
-router.get('/api/dictionary', (req, res) => {
-  try {
-    const liner = new lines('./cedict_ts.utf8');
+// router.get('/api/dictionary', (req, res) => {
+//   try {
 
-    // labeled while loop, if a line meets conditions for skipping, control returns to while loop instead
-    // of for loop
-    loop1: while ((line = liner.next()) && lineNumber <= 150) {
-      // convert each line of file to text with utf8 encoding, otherwise newLine is undefined
-      newLine = line.toString('utf8');
+(function () {
+  const liner = new lines('./cedict_ts.utf8');
 
-      for (i = 0; i <= linesToSkip.length; i++) {
-        if (newLine == '' || newLine.includes(linesToSkip[i])) {
-          numOfLinesSkipped++;
-          continue loop1;
-        }
-      }
-      parseLine(newLine);
-      lineNumber++;
-      if (liner.next === false) {
-        removeSurnames(parsedLines);
+  // labeled while loop, if a line meets conditions for skipping, control returns to while loop instead
+  // of for loop
+  loop1: while ((line = liner.next()) && lineNumber <= 15) {
+    // convert each line of file to text with utf8 encoding, otherwise newLine is undefined
+    newLine = line.toString('utf8');
+
+    for (i = 0; i <= linesToSkip.length; i++) {
+      if (newLine == '' || newLine.includes(linesToSkip[i])) {
+        numOfLinesSkipped++;
+        continue loop1;
       }
     }
-    res.json(parsedLines);
-  } catch (error) {
-    console.error(error);
+    parseLine(newLine);
+    lineNumber++;
+    if (liner.next === false) {
+      removeSurnames(parsedLines);
+    }
   }
-});
+})();
+//     res.json(parsedLines);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// });
 
 // remove text formatting and parse each line into an object
 function parseLine(newLine) {
@@ -80,6 +84,18 @@ function parseLine(newLine) {
   let pinyin = charAndPinyin[1].slice(0, -2);
   let english = newLine[1];
 
+  const newDictEntry = new dictionaryModel({
+    traditional: traditional,
+    simplified: simplified,
+    pinyin: pinyin,
+    english: english,
+  });
+
+  newDictEntry.save((err, result) => {
+    if (err) console.log(err);
+    else console.log('entry added');
+  });
+
   parsed['traditional'] = traditional;
   parsed['simplified'] = simplified;
   parsed['pinyin'] = pinyin;
@@ -97,6 +113,16 @@ function removeSurnames(parsedLines) {
   }
   return parsedLines;
 }
+
+router.get('/dict_entries', async (req, res) => {
+  const dict_entries = await dictionaryModel.find({});
+
+  try {
+    res.send(dict_entries);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 console.log(`Number of lines skipped = ${numOfLinesSkipped}`);
 console.log(parsedLines);
