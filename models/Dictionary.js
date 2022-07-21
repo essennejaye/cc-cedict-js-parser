@@ -1,14 +1,22 @@
-const mongoose = require('mongoose');
-
-const { Schema } = mongoose;
+const { Schema, model } = require('mongoose');
 
 const dictionarySchema = new Schema({
-  traditional: String,
-  simplified: String,
-  pinyin: String,
-  english: String,
+  traditional: {
+    type: String,
+  },
+  simplified: {
+    type: String,
+    required: true,
+  },
+  pinyin: {
+    type: String,
+    required: true,
+  },
+  english: {
+    type: String,
+  },
 });
 
-const Dictionary = mongoose.model('Dictionary', dictionarySchema);
+const Dictionary = model('Dictionary', dictionarySchema);
 
 module.exports = Dictionary;
