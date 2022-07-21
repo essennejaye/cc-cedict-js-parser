@@ -82,18 +82,6 @@ const dictionaryModel = require('./models/Dictionary');
 //   let pinyin = charAndPinyin[1].slice(0, -2);
 //   let english = newLine[1];
 
-//   const newDictEntry = new dictionaryModel({
-//     traditional: traditional,
-//     simplified: simplified,
-//     pinyin: pinyin,
-//     english: english,
-//   });
-
-//   newDictEntry.save((err, result) => {
-//     if (err) console.log(err);
-//     else console.log('entry added');
-//   });
-
 //   // parsed['traditional'] = traditional;
 //   // parsed['simplified'] = simplified;
 //   // parsed['pinyin'] = pinyin;

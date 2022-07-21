@@ -1,9 +1,9 @@
 const db = require('../config/connection');
 const Dictionary = require('../models/Dictionary');
+// const express = require('express');
 
-db.once('open', async () => {
-  await Dictionary.deleteMany({});
-});
+// db.once('open', async () => {
+//   await Dictionary.deleteMany({});
 
 // A JavaScript version of franki allegra's cc-cedict parser
 // (https://github.com/rubber-duck-dragon/rubber-duck-dragon.github.io)
@@ -16,11 +16,10 @@ db.once('open', async () => {
 // npm package that is much faster than node fs)
 const lines = require('n-readlines');
 
-const router = express.Router();
+// const router = express.Router();
 let line;
 let parsedLines = [];
 let lineNumber = 0;
-let numOfLinesSkipped = 0;
 
 // this dictionary has thousands of entries that are not needed for my project
 // so I am going to filter out some of them
@@ -42,23 +41,20 @@ const liner = new lines('./cedict_ts.utf8');
 
 // labeled while loop, if a line meets conditions for skipping, control returns to while loop instead
 // of for loop
-loop1: while ((line = liner.next()) && lineNumber <= 15) {
+loop1: while ((line = liner.next()) && lineNumber <= 1000) {
   // convert each line of file to text with utf8 encoding, otherwise newLine is undefined
   newLine = line.toString('utf8');
 
   for (i = 0; i <= linesToSkip.length; i++) {
     if (newLine == '' || newLine.includes(linesToSkip[i])) {
-      numOfLinesSkipped++;
       continue loop1;
     }
   }
   parseLine(newLine);
   lineNumber++;
-  if (liner.next === false) {
-    removeSurnames(parsedLines);
-    createEntries(parsedLines);
-  }
 }
+removeSurnames(parsedLines);
+createEntries(parsedLines);
 
 // remove text formatting and parse each line into an object
 function parseLine(newLine) {
@@ -71,7 +67,6 @@ function parseLine(newLine) {
   let characters = charAndPinyin[0].split(' ');
   let simplified = characters[1];
   if (/[A-Z0-9]/.test(simplified[0])) {
-    // numOfLinesSkipped++;
     return;
   }
   let traditional = characters[0];
@@ -86,9 +81,9 @@ function parseLine(newLine) {
 }
 
 function removeSurnames(parsedLines) {
-  for (j = 0; j <= parsedLines.length; j++) {
-    if (parsedLines[j][english].includes('surname')) {
-      if (parsedLines[j][traditional] == parsedLines[j + 1][traditional]) {
+  for (j = 0; j < parsedLines.length; j++) {
+    if (parsedLines[j]['english'].includes('surname')) {
+      if (parsedLines[j]['traditional'] == parsedLines[j + 1]['traditional']) {
         parsedLines.splice(j, 1);
       }
     }
@@ -96,8 +91,13 @@ function removeSurnames(parsedLines) {
   return parsedLines;
 }
 
-async function createEntries(parsedLines) {
-  await Dictionary.collection.insertMany(parsedLines);
+function createEntries(parsedLines) {
+  db.once('open', async () => {
+    await Dictionary.deleteMany({});
+    await Dictionary.collection
+      .insertMany(parsedLines, { ordered: false })
+      .catch((err) => console.log(err));
+    console.log('all done');
+    process.exit(0);
+  });
 }
-
-console.log(`Number of lines skipped = ${numOfLinesSkipped}`);
