@@ -1,9 +1,5 @@
 const db = require('../config/connection');
 const Dictionary = require('../models/Dictionary');
-// const express = require('express');
-
-// db.once('open', async () => {
-//   await Dictionary.deleteMany({});
 
 // A JavaScript version of franki allegra's cc-cedict parser
 // (https://github.com/rubber-duck-dragon/rubber-duck-dragon.github.io)

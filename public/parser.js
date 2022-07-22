@@ -1,7 +1,5 @@
 let tableBody = document.getElementById('dictionary');
 
-// fetch('/api/dictionary')
-
 fetch('/dict_entries')
   .then((response) => {
     if (!response.ok) {
@@ -10,7 +8,7 @@ fetch('/dict_entries')
     return response.json();
   })
   .then((data) => {
-    for (i = 0; i <= data.length; i++) {
+    for (i = 0; i <= 50; i++) {
       let tableRow = document.createElement('tr');
 
       for (const dataItem in data[i]) {
