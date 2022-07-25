@@ -8,8 +8,10 @@ fetch('/dict_entries')
     return response.json();
   })
   .then((data) => {
-    for (i = 0; i <= 50; i++) {
+    for (i = 0; i < data.length; i++) {
       let tableRow = document.createElement('tr');
+      tableRow.setAttribute('id', 'row-key');
+      tableRow.addEventListener('click', selectAnswer);
 
       for (const dataItem in data[i]) {
         textItem = data[i][dataItem];
@@ -26,3 +28,8 @@ fetch('/dict_entries')
       error
     );
   });
+
+function selectAnswer(event) {
+  let x = event.currentTarget.cells[3].innerHTML;
+  console.log('cell selected ' + x);
+}

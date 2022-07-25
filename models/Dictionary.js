@@ -15,6 +15,7 @@ const dictionarySchema = new Schema({
   },
   english: {
     type: String,
+    required: true,
   },
 });
 dictionarySchema.plugin(random);

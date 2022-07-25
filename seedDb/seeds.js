@@ -1,5 +1,6 @@
 const db = require('../config/connection');
 const Dictionary = require('../models/Dictionary');
+const lines = require('n-readlines'); // npm package that is much faster than node fs)
 
 // A JavaScript version of franki allegra's cc-cedict parser
 // (https://github.com/rubber-duck-dragon/rubber-duck-dragon.github.io)
@@ -9,16 +10,11 @@ const Dictionary = require('../models/Dictionary');
 // pinyin(romanized spelling for Chinese characters)
 //  This program will also remove a surname entry if there is another entry for the character.
 
-// npm package that is much faster than node fs)
-const lines = require('n-readlines');
-
-// const router = express.Router();
 let line;
 let parsedLines = [];
 let lineNumber = 0;
 
-// this dictionary has thousands of entries that are not needed for my project
-// so I am going to filter out some of them
+// this dictionary has over 100,000 entries, so I am going to filter out some of them
 const linesToSkip = [
   '(Tw)',
   '(slang)',
@@ -38,7 +34,6 @@ const liner = new lines('./cedict_ts.utf8');
 // labeled while loop, if a line meets conditions for skipping, control returns to while loop instead
 // of for loop
 loop1: while ((line = liner.next()) && lineNumber <= 1000) {
-  // convert each line of file to text with utf8 encoding, otherwise newLine is undefined
   newLine = line.toString('utf8');
 
   for (i = 0; i <= linesToSkip.length; i++) {
@@ -49,8 +44,7 @@ loop1: while ((line = liner.next()) && lineNumber <= 1000) {
   parseLine(newLine);
   lineNumber++;
 }
-removeSurnames(parsedLines);
-createEntries(parsedLines);
+createEntries(removeSurnames(parsedLines));
 
 // remove text formatting and parse each line into an object
 function parseLine(newLine) {
