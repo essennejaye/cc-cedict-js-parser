@@ -2,10 +2,8 @@
   "name": "cc-cedict-js-parser",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
-  "scripts": {
-    "seed": "node seedDb/seeds.js"
-  },
+  "main": "seeds.js",
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
