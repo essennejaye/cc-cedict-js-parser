@@ -10,7 +10,6 @@ const lines = require('n-readlines'); // npm package that is much faster than no
 
 let newLine;
 let parsedLines = [];
-let lineNumber = 0;
 let regexp = /\p{sc=Han}/gu; //used to eliminate any line that doesn't contain Chinese characters
 
 // this dictionary has over 100,000 entries, so I am going to filter out some of them
@@ -37,7 +36,7 @@ const liner = new lines('./cedict_ts.u8');
 
 // labeled while loop, if a line meets conditions for skipping, control returns to while loop instead
 // of for loop
-loop1: while ((newLine = liner.next()) && lineNumber <= 150) {
+loop1: while ((newLine = liner.next())) {
   newLine = newLine.toString('utf8');
 
   if (!newLine || !newLine.match(regexp)) {
@@ -50,10 +49,8 @@ loop1: while ((newLine = liner.next()) && lineNumber <= 150) {
     }
   }
   parseLine(newLine);
-  lineNumber++;
 }
 createEntries(removeSurnames(parsedLines));
-// console.log(parsedLines);
 
 // remove text formatting and parse each line into an object
 function parseLine(newLine) {

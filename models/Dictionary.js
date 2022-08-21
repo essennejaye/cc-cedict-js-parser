@@ -1,4 +1,3 @@
-var random = require('mongoose-simple-random');
 const { Schema, model } = require('mongoose');
 
 const dictionarySchema = new Schema({
@@ -18,7 +17,6 @@ const dictionarySchema = new Schema({
     required: true,
   },
 });
-dictionarySchema.plugin(random);
 
 const Dictionary = model('Dictionary', dictionarySchema);
 
